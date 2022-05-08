@@ -8,38 +8,38 @@ Iz = (1/12)*b*t^3;  % Inercia z         [m^4]
 
 K = 2.1;                    % Factor sensibilidad galga [adim]
 Rg = 120;                   % Resistencia galga         [Ohm]
-Rc = 29880;                 % Resistencia calibraci髇   [Ohm]
-ec = (1/K)*Rg/(Rg + Rc);    % Deformaci髇 calibraci髇   [adim]
+Rc = 29880;                 % Resistencia calibraci贸n   [Ohm]
+ec = (1/K)*Rg/(Rg + Rc);    % Deformaci贸n calibraci贸n   [adim]
 
 % Carga las siguientes variables:
 %   - m     Masas utilizadas        [kg]    1x3
 %   - Vs    Voltaje medido          [V]     1x3
-%   - Vc    Voltaje de calibraci髇  [V]     1x1
-load("data/caso_01.mat");
+%   - Vc    Voltaje de calibraci贸n  [V]     1x1
+load("data/caso_03.mat");
 
-%% 2. C罫CULOS
+%% 2. C脕LCULOS
 P = 9.81*m;                 % Carga                     [N]
-sigma = 6*P*L/(b*t^2);      % Tensi髇 normal            [Pa]
-e = ec*Vs/Vc;               % Deformaci髇 calculada     [adim]
+sigma = 6*P*L/(b*t^2);      % Tensi贸n normal            [Pa]
+e = 0.5*ec*Vs/Vc;           % Deformaci贸n calculada     [adim]
 
-%% 3. REGRESI覰 LINEAL
+%% 3. REGRESI脫N LINEAL
 p = polyfit(e, sigma, 1);
 
 A = [e' ones(3,1)];         % Matriz sistema sobredeterminado
-b = sigma';                 % Vector t閞minos independientes
+b = sigma';                 % Vector t茅rminos independientes
 coef = inv(A'*A)*(A'*b);    % Sistema de ecuaciones normales
 a = coef(1);                % Modulo de Young [Pa]
 b = coef(2);                % Intercept
 
-f = @(x) a*x + b;   % Recta tensi髇-deformaci髇
-sigma_pred = f(e);  % Valores predichos de tensi髇
-R2 = (norm(sigma_pred - mean(sigma))/norm(sigma - mean(sigma)))^2;  % Coeficiente determinaci髇
+f = @(x) a*x + b;   % Recta tensi贸n-deformaci贸n
+sigma_pred = f(e);  % Valores predichos de tensi贸n
+R2 = (norm(sigma_pred - mean(sigma))/norm(sigma - mean(sigma)))^2;  % Coeficiente determinaci贸n
 
 %% 4. IMPRIMIR DATOS
 
 fprintf("%10s = %.4e\n", "Vc", Vc);
 fprintf("%10s = %.4e\n", "ec", ec);
-fprintf("%10s = %.4f\n", "Vc/ec", 1e3*Vc/ec);
+fprintf("%10s = %.4f\n", "2*Vc/ec", 2e3*Vc/ec);
 fprintf("%10s = %.2f MPa\n", "E", 1e-6*a);
 fprintf("%10s = %.2e MPa\n", "Intercept", 1e-6*b);
 fprintf("%10s = %.3e MPa\n", "1-R2", 1-R2);
@@ -63,8 +63,8 @@ scatter(e, Vs, 30, 'b', 'filled');
 plot(e, Vs, 'b');
 xlabel("Deformaci\'on $\Delta \varepsilon$");
 ylabel("Voltaje $\Delta V_s \ [\mathrm{V}]$");
-xlim([0 1e-3]);
-ylim([0 1]);
+% xlim([0 1e-3]);
+% ylim([0 1]);
 grid on;
 box on;
 set(gcf, 'units', 'centimeters', 'position', [0,5,15,15]);
@@ -79,12 +79,12 @@ scatter(e, 1e-6*sigma, 20, 'b', 'filled');
 xlabel("Deformaci\'on longitudinal $\varepsilon_\ell$");
 ylabel("Tensi\'on $\sigma \ [\mathrm{MPa}]$");
 xlim([0 1e-3]);
-yticks(20:5:70);
+yticks([20:5:70]);
 grid on;
 box on;
 set(gcf, 'units', 'centimeters', 'position', [15,5,15,8]);
 legend("Regresi\'on lineal", "$(\varepsilon_\ell, \sigma)$", "Location", "northwest");
 hold off;
-save2pdf(h, "plots/tension_deformacion_01.pdf");
+save2pdf(h, "plots/tension_deformacion_03.pdf");
 
 
