@@ -1,0 +1,10 @@
+
+\section{Conclusiones}
+
+Tras la realización de la práctica, se pueden extraer las siguientes conclusiones:
+
+\begin{enumerate}
+    \item El problema propuesto en la Sección \ref{sec:planteamiento} se ha resuelto numéricamente mediante el método de los elementos finitos. De la simulación se han obtenido tensiones, deformaciones y desplazamiento, que han sido contrastados con los valores analíticos. En todos los casos los errores relativos son inferiores al $5 \%$, por lo que los valores analíticos y numéricos son muy cercanos.
+    \item Asumiendo un coeficiente de seguridad de $2$ y un límite elástico de $176 \ \mega\pascal$, se ha calculado analíticamente la carga máxima que puede aplicarse en el extremo libre. Asimismo, tomando como reales los valores de tensión máxima en la galga y en toda la pieza, se han calculado con qué coeficientes de seguridad opera la galga y la pieza en general. Si bien en la sección de la galga el coeficiente de seguridad es cercano a $3$, la tensión máxima en la pieza provoca que el coeficiente de seguridad esté en torno a $1.8$. Para conseguir que la tensión máxima en la pieza disminuya, debe reducirse la carga aplicada o bien modificar la geometría de la probeta, reduciendo su longitud o aumentando su espesor y/o grosor.
+    \item Utilizando tres mallas de distinto tamaño máximo de elemento, se han recalculado las errores relativos en tensión, deformación y desplazamiento máximo. En todos los casos los errores relativos son inferiores al $3 \%$. De igual forma, se ha estudiado el efecto del tamaño máximo de elemento de malla en los tiempos de mallado y cálculo. Una pequeña reducción en el tamaño de elemento de malla implica un aumento considerable de ambos tiempos. En consecuencia, en este caso no está justificado emplear la malla más fina, dado que el aumento en los tiempos de mallado y cálculo no acarrea una variación significativa de los resultados del método.
+\end{enumerate}

@@ -1,0 +1,26 @@
+\documentclass[a4paper, 12pt]{article}
+
+\input{preamble}
+\input{page_style}
+\input{environments_en}
+\input{units}
+
+
+\begin{document}
+
+\input{title}
+\shipout\null
+
+\tableofcontents
+\clearpage  \input{sections/introduccion}
+\input{sections/objetivos}
+\input{sections/metodologia}
+\clearpage  \input{sections/resultados}
+\clearpage  \input{sections/conclusiones}
+
+\nocite{*}
+\clearpage  \printbibliography
+
+
+
+\end{document}

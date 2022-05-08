@@ -1,0 +1,93 @@
+
+\section{Introducción}
+
+\subsection{Método de los Elementos Finitos}
+
+Una gran cantidad de los problemas que se plantean en física y en ingeniería están escritos en términos de ecuaciones diferenciales. En algunos casos es posible demostrar teoremas de existencia y unicidad de solución a la ecuación diferencial, ya sea una solución clásica o una solución llamada ``débil''. Es más, muchas herramientas actualmente esenciales, como las transformadas de Fourier y de Laplace, tuvieron un desarrollo inicial fuertemente ligado a las ecuaciones diferenciales y a la representación de sus soluciones. Sin embargo, las soluciones analíticas solamente pueden obtenerse, de forma general, en casos ideales, \eg en dominios que tienen muchas simetrías, con fronteras suaves, etc. 
+
+Para resolver estos problemas es necesario recurrir a métodos numéricos. En términos generales, estos son algoritmos que reciben el problema y producen una solución cercana a la realidad. Un ejemplo es el Método de los Volúmenes Finitos (FVM -- \emph{Finite Volume Method}), usado especialmente en mecánica de fluidos, que se basa en discretizar el espacio en volúmenes de control y aplicar las leyes de conservación y constitutivas en cada uno para así transformar el sistema de ecuaciones diferenciales en un sistema de ecuaciones algebraicas. El método numérico que concierne a esta práctica es el Método de los Elementos Finitos (FEM -- \emph{Finite Element Method}). En términos generales, este método se basa en el hecho que, dadas unas condiciones de contorno, el problema intentará adoptar la configuración de mínima energía posible. Así pues, el método puede verse como ``minimizar la energía respetando las leyes constitutivas y las condiciones de contorno'' \cite{femSimScale}. Este método es usado en gran diversidad de campos, a saber, mecánica de fluidos, transferencia de calor, análisis estructural, etc.
+
+
+\subsection{Planteamiento} \label{sec:planteamiento}
+
+\noindent
+En la Figura \ref{fig:planteamiento} se representa la probeta que se estudiará. Esta es de longitud $L_g + 50 \ \milli\meter$, ancho $b$ y grosor $t$. Se encuentra empotrada en el extremo izquierdo, mientras que en el extremo derecho se aplica una carga $P$, de manera que la pieza funciona como una ménsula.
+
+\begin{figure}[h]
+    \centering
+    \tdplotsetmaincoords{65}{20}
+    \begin{tikzpicture}[scale=1,tdplot_main_coords]
+    	\def\L{10}	
+    	\def\b{4}	
+    	\def\t{0.5}	
+    	\def\offset{0.5}
+    	
+    	\begin{scope}[shift={(-1.5,-1,0)}]
+    	    \draw[greenaxis, line width=0.15mm] (0,0,0.1) -- (0,0,0) -- (0.1,0,0);
+        	\draw[greenaxis, -latex, line width=0.15mm] (0,0,0) -- (1,0,0) node[right]{$x$};
+        	\draw[greenaxis, -latex, line width=0.15mm] (0,0,0) -- (0,1,0) node[right]{$y$};
+        	\draw[greenaxis, -latex, line width=0.15mm] (0,0,0) -- (0,0,1) node[above]{$z$};
+    	\end{scope}
+    	
+    % 	\draw[] (0,0,0) -- ++(\L,0,0) -- ++(0,0,\t) -- ++(-\L,0,0) -- cycle;
+    % 	\draw[] (\L,0,0) -- ++(0,\b,0) -- ++(0,0,\t) -- ++(0,-\b,0) -- cycle;
+    % 	\draw[] (\L,0,\t) -- ++(0,\b,0) -- ++(-\L,0,0) -- ++(0,-\b,0) -- cycle;
+    	
+    	% Pared
+    	\draw[line width=0.3mm] (0,-\offset,-\offset) -- ++(0,\b+2*\offset,0) -- ++(0,0,\t+2*\offset) -- ++(0,-\b-2*\offset) -- cycle;
+    	
+    	% Ménsula relleno
+    	\fill[black!20!white] (0,0,0) -- ++(\L,0,0) -- ++(0,0,\t) -- ++(-\L,0,0) -- cycle;
+    	\fill[black!20!white] (\L,0,0) -- ++(0,\b,0) -- ++(0,0,\t) -- ++(0,-\b,0) -- cycle;
+    	\fill[black!20!white] (\L,0,\t) -- ++(0,\b,0) -- ++(-\L,0,0) -- ++(0,-\b,0) -- cycle;
+    	
+    	% Ménsula contorno
+    	\draw[line width=0.3mm] (0,0,0) -- ++(\L,0,0) -- ++(0,\b,0) -- ++(0,0,\t) -- ++(-\L,0,0) -- ++(0,-\b,0) -- cycle;
+    	\draw[line width=0.3mm] (0,0,\t) -- ++(\L,0,0) -- ++(0,\b,0);
+    	\draw[line width=0.3mm] (\L,0,0) -- ++(0,0,\t);
+    	
+    	% Cota b
+    	\draw[stealth-stealth, bluemeasure, line width=0.15mm] (0.75*\L,0,\t) -- node[sloped, midway, above]{$b$} ++(0,\b,0);
+    	
+    	% Cota Lg
+    	\draw[bluemeasure, yshift=0mm, line width=0.15mm] (0,0.5*\b,\t) -- ++(0,0,4.2*\t); 
+    	\draw[bluemeasure, yshift=0mm, line width=0.15mm] (2,0.5*\b,\t) -- ++(0,0,4.2*\t); 
+    	\draw[bluemeasure, yshift=0mm, line width=0.15mm] (\L,0.5*\b,\t) -- ++(0,0,4.2*\t); 
+		\draw[stealth-stealth, bluemeasure, line width=0.15mm] (0,0.5*\b,5*\t) -- node[sloped, midway, above]{$50 \ \milli\meter$} ++(2,0,0);
+		\draw[stealth-stealth, bluemeasure, line width=0.15mm] (2,0.5*\b,5*\t) -- node[sloped, midway, above]{$L_g$} ++(\L-2,0,0);
+    	
+    	% Cota t
+    	\begin{scope}[shift={(\L,\b,0)}]
+    	    \draw[stealth-stealth, bluemeasure, line width=0.15mm] (0.5,0,0) -- node[midway, right]{$t$} ++(0,0,\t);
+    	    \draw[bluemeasure, line width=0.15mm] (0,0,0) -- ++(0.5+0.2*\t,0,0);
+    	    \draw[bluemeasure, line width=0.15mm] (0,0,\t) -- ++(0.5+0.2*\t,0,0);
+    	\end{scope}
+    	
+    	% Carga
+    	\begin{scope}[shift={(\L,0.5*\b,0)}]
+    	    \draw[-latex, very thick] (0,0,0) -- ++(0,0,-1) node[right]{$P$};
+    	\end{scope}
+    	
+    \end{tikzpicture}
+    \captionsetup{width=0.8\textwidth}
+    \caption{Esquema de la probeta, dimensiones, lugar de aplicación de la carga $P$ y sistema de ejes.}
+    \label{fig:planteamiento}
+\end{figure}
+
+\noindent
+A $50 \ \milli\meter$ del empotramiento, se encuentra una galga que permite medir la deformación. La probeta está fabricada en Aluminio 6061--T6. En la Tabla \ref{tab:datos} se recogen los datos de geometría y el módulo de Young del material.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccccc}
+        \toprule[0.50mm]
+        $\mathbf{L_g}$ & $\mathbf{b}$ & $\mathbf{t}$ & $\mathbf{P}$ & $\mathbf{E}$ \\
+        \midrule[0.25mm]
+        $190 \ \milli\meter$ & $42 \ \milli\meter$ & $3.5 \ \milli\meter$ & $26 \ \newton$ & $69 \ \giga\pascal$ \\
+        \bottomrule[0.50mm]
+    \end{tabular}
+    \caption{Datos de geometría y del material.}
+    \label{tab:datos}
+\end{table}
+
+Usando el método de los elementos finitos, se desea estudiar la flexión simple de la probeta provocada por la carga $P$ y extraer datos sobre tensiones, deformaciones y desplazamientos.  
