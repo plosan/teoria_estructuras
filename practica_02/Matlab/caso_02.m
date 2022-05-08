@@ -50,6 +50,8 @@ for i = 1:length(m)
     fprintf("$%1d$ %3s $%7.2f$ %3s $%7.3f$ %3s $%5d$ %3s $%8.3e$ \\\\ \n", m(i), "&", P(i), "&", 1e-6*sigma(i), "&", 1e3*Vs(i), "&", e(i));
 end
 
+save("data/e2", 'e');
+
 %% 5. PLOT
 set(groot,'defaultAxesTickLabelInterpreter','latex');  
 set(groot,'defaulttextinterpreter','latex');

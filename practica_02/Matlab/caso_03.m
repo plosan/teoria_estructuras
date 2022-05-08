@@ -45,10 +45,12 @@ fprintf("%10s = %.2e MPa\n", "Intercept", 1e-6*b);
 fprintf("%10s = %.3e MPa\n", "1-R2", 1-R2);
 
 
-
+fprintf("\n\nTabla:\n");
 for i = 1:length(m)
     fprintf("$%1d$ %3s $%7.2f$ %3s $%7.3f$ %3s $%5d$ %3s $%8.3e$ \\\\ \n", m(i), "&", P(i), "&", 1e-6*sigma(i), "&", 1e3*Vs(i), "&", e(i));
 end
+
+save("data/e3", 'e');
 
 %% 5. PLOT
 set(groot,'defaultAxesTickLabelInterpreter','latex');  
